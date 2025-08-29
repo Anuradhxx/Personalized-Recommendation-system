@@ -11,7 +11,8 @@ st.title("📚 Personalized Book Recommendation System")
 # Load Dataset
 # -----------------------------
 try:
-    books_df = pd.read_excel("Books_Dataset.xlsx")  # adjust path if needed
+    books_df = pd.read_excel("../Books_Dataset.xlsx")
+ # adjust path if needed
 except FileNotFoundError:
     st.error("Books_Dataset.xlsx not found. Please check the path.")
     st.stop()
@@ -68,18 +69,24 @@ def top_rated_recs(n=5):
 # -----------------------------
 # Initial First Page (when no search input)
 # -----------------------------
-images = ["page_Cover/Handbook.jpg","page_Cover/read.jpg","page_Cover/Harry Potter.jpg"]
+images = [
+    "../Page_Cover/Handbook.jpg",
+    "../Page_Cover/read.jpg",
+    "../Page_Cover/Harry Potter.jpg"
+]
+
 if not query:  
     # st.image(images,width=250) #replace with your image file
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.image(images[0], use_column_width=True)
+        st.image(images[0], use_container_width=True)
     with col2:
-        st.image(images[1], use_column_width=True)
+        st.image(images[1], use_container_width=True)
     with col3:
-        st.image(images[2], use_column_width=True)
+        st.image(images[2], use_container_width=True)
+
 
     st.markdown(
         "<h3 style='text-align:center; color:#BDB82A;'>Welcome to the Book Recommender 📖</h3>",
