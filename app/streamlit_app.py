@@ -11,7 +11,7 @@ st.title("📚 Personalized Book Recommendation System")
 # Load Dataset
 # -----------------------------
 try:
-    books_df = pd.read_excel("Books_Dataset.xlsx")  # adjust path if needed
+    books_df = pd.read_excel("../Books_Dataset.xlsx")  # adjust path if needed
 except FileNotFoundError:
     st.error("Books_Dataset.xlsx not found. Please check the path.")
     st.stop()
