@@ -11,7 +11,7 @@ st.title("📚 Personalized Book Recommendation System")
 # Load Dataset
 # -----------------------------
 try:
-    books_df = pd.read_excel("../Books_Dataset.xlsx")  # adjust path if needed
+    books_df = pd.read_excel("Books_Dataset.xlsx")  # adjust path if needed
 except FileNotFoundError:
     st.error("Books_Dataset.xlsx not found. Please check the path.")
     st.stop()
@@ -26,14 +26,23 @@ books_df.columns = (
     .str.replace(r'[^\w]', '_', regex=True)  # replace non-word characters with underscore
 )
 
-# Optional: display columns for debugging
-# st.write("Columns detected:", books_df.columns.tolist())
-
 # -----------------------------
 # Sidebar Search
 # -----------------------------
 st.sidebar.header("Search Books")
-query = st.sidebar.text_input("Enter book title, author, genre, or tags")
+# query = st.sidebar.text_input("Enter book Title, Author, Genre, or Tags")
+# Collect unique options from dataset
+book_titles = books_df['title'].dropna().unique().tolist()
+authors = books_df['author'].dropna().unique().tolist()
+genres = books_df['genre'].dropna().unique().tolist()
+
+# Combine into one dropdown list
+options = [""] + book_titles + authors + genres
+
+# Sidebar dropdown
+query = st.sidebar.selectbox("🔍 Choose a book, author, or genre", options)
+
+
 
 # -----------------------------
 # Recommendation Functions
@@ -57,6 +66,29 @@ def top_rated_recs(n=5):
         return books_df.sample(n).to_dict('records')  # fallback
 
 # -----------------------------
+# Initial First Page (when no search input)
+# -----------------------------
+images = ["page_Cover/Handbook.jpg","page_Cover/read.jpg","page_Cover/Harry Potter.jpg"]
+if not query:  
+    # st.image(images,width=250) #replace with your image file
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.image(images[0], use_column_width=True)
+    with col2:
+        st.image(images[1], use_column_width=True)
+    with col3:
+        st.image(images[2], use_column_width=True)
+
+    st.markdown(
+        "<h3 style='text-align:center; color:#BDB82A;'>Welcome to the Book Recommender 📖</h3>",
+        unsafe_allow_html=True
+    )
+
+    st.write("👉 Start by typing a title, author, genre, or tags in the sidebar to see recommendations.")
+
+# -----------------------------
 # Tabs for Recommendations
 # -----------------------------
 tab1, tab2 = st.tabs(["Content-Based", "Top Rated / Matrix Factorization"])
@@ -66,18 +98,21 @@ with tab1:
     recs = content_based_recs(query)
     if recs:
         for book in recs:
-            st.markdown(f"### {book['title']}")
+            # Book Title in #BDB82A
+            st.markdown(f"<h3 style='color:#BDB82A;'>{book['title']}</h3>", unsafe_allow_html=True)
             st.markdown(f"**Author:** {book['author']} | **Genre:** {book['genre']} | ⭐ {book.get('rating', 'N/A')}")
             st.markdown(f"*Summary:* {book.get('summary','')[:200]}...")
             st.markdown("---")
     else:
-        st.write("Enter a search term to see recommendations.")
+        if query:  # only show this if user typed something
+            st.warning("No matching books found.")
 
 with tab2:
     st.subheader("Top Rated Books")
     recs = top_rated_recs()
     for book in recs:
-        st.markdown(f"### {book['title']}")
+        # Book Title in #33308C
+        st.markdown(f"<h3 style='color:#BDB82A;'>{book['title']}</h3>", unsafe_allow_html=True)
         st.markdown(f"**Author:** {book['author']} | **Genre:** {book['genre']} | ⭐ {book.get('rating','N/A')}")
         st.markdown(f"*Summary:* {book.get('summary','')[:200]}...")
         st.markdown("---")
